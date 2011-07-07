@@ -21,9 +21,9 @@ import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.transaction.UserTransaction;
 
-import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.container.openejb.embedded_3_1.ejb.DataBean;
 import org.jboss.arquillian.container.openejb.embedded_3_1.ejb.DataLocalBusiness;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;

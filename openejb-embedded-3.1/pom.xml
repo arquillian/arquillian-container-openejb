@@ -1,88 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<!-- Parent -->
-	<parent>
-		<groupId>org.jboss.arquillian.container</groupId>
-		<artifactId>arquillian-parent-openejb</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
+    <!-- Parent -->
+    <parent>
+        <groupId>org.jboss.arquillian.container</groupId>
+        <artifactId>arquillian-parent-openejb</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
 
-	<!-- Model Version -->
-	<modelVersion>4.0.0</modelVersion>
+    <!-- Model Version -->
+    <modelVersion>4.0.0</modelVersion>
 
-	<!-- Artifact Configuration -->
-	<groupId>org.jboss.arquillian.container</groupId>
-	<artifactId>arquillian-openejb-embedded-3.1</artifactId>
-	<name>Arquillian Container OpenEJB Embedded 3.1.x</name>
-	<description>OpenEJB 3.1.x Embedded integration for the Arquillian Project</description>
-
-
-	<!-- Properties -->
-	<properties>
-
-		<!-- Versioning -->
-		<version.org.apache.openejb_openejb.core>3.1.4</version.org.apache.openejb_openejb.core>
-
-	</properties>
-
-	<!-- Dependencies -->
-	<dependencies>
-
-		<!-- 
-    org.jboss.arquillian
-     -->
-
-		<dependency>
-			<groupId>org.jboss.arquillian.testenricher</groupId>
-			<artifactId>arquillian-testenricher-ejb</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jboss.arquillian</groupId>
-			<artifactId>arquillian-impl-base</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<!-- 
-    External Projects
-     -->
-		<dependency>
-			<groupId>org.jboss.shrinkwrap</groupId>
-			<artifactId>shrinkwrap-extension-openejb</artifactId>
-			<version>${version.shrinkwrap_shrinkwrap}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.openejb</groupId>
-			<artifactId>openejb-core</artifactId>
-			<version>${version.org.apache.openejb_openejb.core}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<!-- test -->
-		<dependency>
-			<groupId>org.jboss.arquillian</groupId>
-			<artifactId>arquillian-junit</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
+    <!-- Artifact Configuration -->
+    <artifactId>arquillian-openejb-embedded-3.1</artifactId>
+    <name>Arquillian Container OpenEJB Embedded 3.1.x</name>
+    <description>OpenEJB 3.1.x Embedded integration for the Arquillian Project</description>
 
 
-		<!-- Part of prototyping, extract when ready -->
-		<dependency>
-			<groupId>javax.inject</groupId>
-			<artifactId>javax.inject</artifactId>
-			<scope>provided</scope>
-		</dependency>
+    <!-- Properties -->
+    <properties>
 
-		<dependency>
-			<groupId>org.jboss.arquillian.testenricher</groupId>
-			<artifactId>arquillian-testenricher-resource</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-	</dependencies>
+        <!-- Versioning -->
+        <version.org.apache.openejb_openejb.core>3.1.4</version.org.apache.openejb_openejb.core>
+        <version.shrinkwrap_shrinkwrap>1.0.0-beta-1</version.shrinkwrap_shrinkwrap>
+    </properties>
+
+    <!-- Dependencies -->
+    <dependencies>
+
+        <!-- org.jboss.arquillian -->
+
+        <dependency>
+            <groupId>org.jboss.arquillian.core</groupId>
+            <artifactId>arquillian-core-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-container-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-container-test-spi</artifactId>
+        </dependency>
+
+        <dependency> <!-- Needed to add After/Before Lifecycle handlers -->
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-container-test-impl-base</artifactId>
+        </dependency>
+
+        <!-- External Projects -->
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.container</groupId>
+            <artifactId>shrinkwrap-container-openejb-31</artifactId>
+            <version>${version.shrinkwrap_shrinkwrap}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.openejb</groupId>
+            <artifactId>openejb-core</artifactId>
+            <version>${version.org.apache.openejb_openejb.core}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- test -->
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+
+        <!-- Part of prototyping, extract when ready -->
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
 </project>
 

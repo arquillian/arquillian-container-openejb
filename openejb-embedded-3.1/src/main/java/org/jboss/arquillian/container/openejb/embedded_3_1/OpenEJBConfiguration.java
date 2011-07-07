@@ -18,8 +18,8 @@ package org.jboss.arquillian.container.openejb.embedded_3_1;
 
 import java.io.File;
 
-import org.jboss.arquillian.spi.ConfigurationException;
-import org.jboss.arquillian.spi.client.container.ContainerConfiguration;
+import org.jboss.arquillian.container.spi.ConfigurationException;
+import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
 
 /**
  * OpenEJBConfiguration

@@ -1,33 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-   <!-- Parent --> 
-        <parent>
+    <!-- Parent -->
+    <parent>
+        <groupId>org.jboss</groupId>
+        <artifactId>jboss-parent</artifactId>
+        <version>6-beta-2</version>
+        <relativePath />
+    </parent>
+
+    <!-- Model Version -->
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Artifact Configuration -->
+    <groupId>org.jboss.arquillian.container</groupId>
+    <artifactId>arquillian-parent-openejb</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Arquillian Container Parent OpenEJB</name>
+    <description>OpenEJB Container integrations for the Arquillian Project</description>
+
+    <scm>
+        <connection>scm:git:git://git@github.com:arquillian/arquillian-container-openejb.git</connection>
+        <developerConnection>scm:git:ssh://github.com/arquillian/arquillian-container-openejb.git</developerConnection>
+        <url>git://github.com/arquillian/arquillian-container-openejb.git</url>
+    </scm>
+
+
+    <!-- Properties -->
+    <properties>
+
+        <version.arquillian>1.0.0.Final-SNAPSHOT</version.arquillian>
+
+        <!-- override from parent -->
+        <version.release.plugin>2.1</version.release.plugin>
+        <maven.compiler.target>1.5</maven.compiler.target>
+        <maven.compiler.source>1.5</maven.compiler.source>
+
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.arquillian</groupId>
+                <artifactId>arquillian-bom</artifactId>
+                <version>${version.arquillian}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
                 <groupId>org.jboss.arquillian</groupId>
                 <artifactId>arquillian-build</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
-        </parent>
-   
-   <!-- Model Version -->
-   <modelVersion>4.0.0</modelVersion>
+                <version>${version.arquillian}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-   <!-- Artifact Configuration -->
-   <groupId>org.jboss.arquillian.container</groupId>
-   <artifactId>arquillian-parent-openejb</artifactId>
-   <version>1.0.0-SNAPSHOT</version>
-   <packaging>pom</packaging>
-   <name>Arquillian Container Parent OpenEJB</name>
-   <description>OpenEJB Container integrations for the Arquillian Project</description>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <pushChanges>false</pushChanges>
+                    <localCheckout>true</localCheckout>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
-
-   <!-- Properties -->
-   <properties>
-   </properties>
-
-   <modules>
-      <module>openejb-embedded-3.1</module>
-   </modules>
+    <modules>
+        <module>openejb-embedded-3.1</module>
+    </modules>
 
 </project>
-

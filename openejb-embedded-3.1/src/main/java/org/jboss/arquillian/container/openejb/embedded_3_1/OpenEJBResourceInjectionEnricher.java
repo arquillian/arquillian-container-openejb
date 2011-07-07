@@ -16,11 +16,13 @@
  */
 package org.jboss.arquillian.container.openejb.embedded_3_1;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.annotation.Resource;
 import javax.naming.Binding;
@@ -31,10 +33,9 @@ import javax.resource.spi.ResourceAdapter;
 import javax.sql.DataSource;
 import javax.transaction.UserTransaction;
 
-import org.jboss.arquillian.spi.TestEnricher;
-import org.jboss.arquillian.spi.core.Instance;
-import org.jboss.arquillian.spi.core.annotation.Inject;
-import org.jboss.arquillian.testenricher.resource.ResourceInjectionEnricher;
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.test.spi.TestEnricher;
 
 /**
  * {@link TestEnricher} implementation specific to the OpenEJB
@@ -44,20 +45,174 @@ import org.jboss.arquillian.testenricher.resource.ResourceInjectionEnricher;
  * @author David Allen
  *
  */
-public class OpenEJBResourceInjectionEnricher extends ResourceInjectionEnricher
+public class OpenEJBResourceInjectionEnricher implements TestEnricher
 {
-   private static final String RESOURCE_ADAPTER_LOOKUP_PREFIX = "openejb/Resource";
 
+   private static final String RESOURCE_LOOKUP_PREFIX = "java:/comp/env";
+   private static final String ANNOTATION_NAME = "javax.annotation.Resource";
+   
+   
+   private static final Logger log = Logger.getLogger(OpenEJBResourceInjectionEnricher.class.getName());
+   
    @Inject
-   private Instance<Context> contextInstance;
-
-   @Override
-   protected Context getContainerContext() throws NamingException
+   private Instance<Context> contextInst;
+   
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.TestEnricher#enrich(org.jboss.arquillian.spi.Context, java.lang.Object)
+    */
+   public void enrich(Object testCase)
    {
-      return contextInstance.get();
+      if(SecurityActions.isClassPresent(ANNOTATION_NAME) && contextInst.get() != null) 
+      {
+         injectClass(testCase);
+      }
    }
 
-   @Override
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.TestEnricher#resolve(org.jboss.arquillian.spi.Context, java.lang.reflect.Method)
+    */
+   public Object[] resolve(Method method) 
+   {
+     return new Object[method.getParameterTypes().length];
+   }
+
+   protected void injectClass(Object testCase) 
+   {
+      try 
+      {
+         @SuppressWarnings("unchecked")
+         Class<? extends Annotation> resourceAnnotation = (Class<? extends Annotation>)SecurityActions.getThreadContextClassLoader().loadClass(ANNOTATION_NAME);
+         
+         List<Field> annotatedFields = SecurityActions.getFieldsWithAnnotation(
+               testCase.getClass(), 
+               resourceAnnotation);
+         
+         for(Field field : annotatedFields) 
+         {
+            /*
+             * only try to lookup fields that are not already set or primitives
+             * (we don't really know if they have been set or not)
+             */
+            Object currentValue = field.get(testCase);
+            if(shouldInject(field, currentValue))
+            {
+               Object resource = resolveResource(field);
+               field.set(testCase, resource);
+            }
+         }
+         
+         List<Method> methods = SecurityActions.getMethodsWithAnnotation(
+               testCase.getClass(), 
+               resourceAnnotation);
+         
+         for(Method method : methods) 
+         {
+            if(method.getParameterTypes().length != 1) 
+            {
+               throw new RuntimeException("@Resource only allowed on single argument methods");
+            }
+            if(!method.getName().startsWith("set")) 
+            {
+               throw new RuntimeException("@Resource only allowed on 'set' methods");
+            }
+            Object resource = resolveResource(method);
+            method.invoke(testCase, resource);
+         }
+      } 
+      catch (Exception e) 
+      {
+         throw new RuntimeException("Could not inject members", e);
+      }
+   }
+
+   private boolean shouldInject(Field field, Object currentValue)
+   {
+      Class<?> type = field.getType();
+      if(type.isPrimitive())
+      {
+         if(isPrimitiveNull(currentValue)) 
+         {
+            log.fine("Primitive field " + field.getName() + " has been detected to have the default primitive value, " +
+                    "can not determine if it has already been injected. Re-injecting field.");
+            return true;
+         }
+      }
+      else
+      {
+         if(currentValue == null)
+         {
+            return true;
+         }
+      }
+      return false;
+   }
+   
+   private boolean isPrimitiveNull(Object currentValue)
+   {
+      String stringValue = String.valueOf(currentValue);
+      if("0".equals(stringValue) || "0.0".equals(stringValue) || "false".equals(stringValue))
+      {
+         return true;
+      } 
+      else if(Character.class.isInstance(currentValue))
+      {
+         if( Character.class.cast(currentValue) == (char)0) 
+         {
+            return true;
+         }
+      }
+      return false;
+   }
+
+   protected Object lookup(String jndiName) throws Exception 
+   {
+      // TODO: figure out test context ? 
+      Context context = getContainerContext();
+      return context.lookup(jndiName);
+   }
+   
+   /**
+    * Obtains the appropriate context for the test.  Can be overriden by
+    * enrichers for each container to provide the correct context.
+    * @return the test context
+    * @throws NamingException
+    */
+   protected Context getContainerContext() throws NamingException
+   {
+      return contextInst.get();
+   }
+
+   protected String getResourceName(Field field)
+   {
+      Resource resource = field.getAnnotation(Resource.class);
+      String resourceName = getResourceName(resource);
+      if(resourceName != null) 
+      {
+       return resourceName;
+      }
+      String propertyName = field.getName();
+      String className = field.getDeclaringClass().getName();
+      return RESOURCE_LOOKUP_PREFIX + "/" + className + "/" + propertyName;
+   }
+   
+   protected String getResourceName(Resource resource)
+   {
+      String mappedName = resource.mappedName();
+      if (!mappedName.equals(""))
+      {
+         return mappedName;
+      }
+      String name = resource.name();
+      if (!name.equals(""))
+      {
+         return RESOURCE_LOOKUP_PREFIX + "/" + name;
+      }
+      return null;
+   }
+
+   
+   private static final String RESOURCE_ADAPTER_LOOKUP_PREFIX = "openejb/Resource";
+
    protected Object resolveResource(AnnotatedElement element) throws Exception
    {
       Object resolvedResource = null;
