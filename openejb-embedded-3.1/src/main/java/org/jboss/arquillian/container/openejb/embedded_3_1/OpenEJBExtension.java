@@ -18,8 +18,6 @@
 package org.jboss.arquillian.container.openejb.embedded_3_1;
 
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
-import org.jboss.arquillian.container.test.impl.execution.AfterLifecycleEventExecuter;
-import org.jboss.arquillian.container.test.impl.execution.BeforeLifecycleEventExecuter;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
@@ -37,9 +35,5 @@ public class OpenEJBExtension implements LoadableExtension
       builder.service(DeployableContainer.class, OpenEJBContainer.class)
              .service(TestEnricher.class, OpenEJBTestEnricher.class)
              .service(TestEnricher.class, OpenEJBResourceInjectionEnricher.class);
-      
-      builder.observer(AfterLifecycleEventExecuter.class)
-             .observer(BeforeLifecycleEventExecuter.class);
    }
-
 }

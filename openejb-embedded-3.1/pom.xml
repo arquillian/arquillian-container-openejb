@@ -18,7 +18,6 @@
     <name>Arquillian Container OpenEJB Embedded 3.1.x</name>
     <description>OpenEJB 3.1.x Embedded integration for the Arquillian Project</description>
 
-
     <!-- Properties -->
     <properties>
 
@@ -31,7 +30,6 @@
     <dependencies>
 
         <!-- org.jboss.arquillian -->
-
         <dependency>
             <groupId>org.jboss.arquillian.core</groupId>
             <artifactId>arquillian-core-spi</artifactId>
@@ -43,11 +41,6 @@
         <dependency>
             <groupId>org.jboss.arquillian.container</groupId>
             <artifactId>arquillian-container-test-spi</artifactId>
-        </dependency>
-
-        <dependency> <!-- Needed to add After/Before Lifecycle handlers -->
-            <groupId>org.jboss.arquillian.container</groupId>
-            <artifactId>arquillian-container-test-impl-base</artifactId>
         </dependency>
 
         <!-- External Projects -->
@@ -69,7 +62,6 @@
             <artifactId>arquillian-junit-container</artifactId>
             <scope>test</scope>
         </dependency>
-
 
         <!-- Part of prototyping, extract when ready -->
         <dependency>
