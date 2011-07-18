@@ -16,7 +16,7 @@
     <!-- Artifact Configuration -->
     <groupId>org.jboss.arquillian.container</groupId>
     <artifactId>arquillian-parent-openejb</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0.CR2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Arquillian Container Parent OpenEJB</name>
     <description>OpenEJB Container integrations for the Arquillian Project</description>
@@ -31,7 +31,7 @@
     <!-- Properties -->
     <properties>
 
-        <version.arquillian>1.0.0.Final-SNAPSHOT</version.arquillian>
+        <version.arquillian>1.0.0.CR2</version.arquillian>
 
         <!-- override from parent -->
         <version.release.plugin>2.1</version.release.plugin>
